@@ -1,0 +1,6 @@
+      - name: Generate Packages Index
+        run: |
+          cd debs  # 先进入 debs 文件夹
+          dpkg-scanpackages . /dev/null > Packages
+          gzip -k Packages
+          # 此时 Packages.gz 就在 debs 文件夹里了
