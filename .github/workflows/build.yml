@@ -1,9 +1,10 @@
-name: Update APT Repo
+name: Update APT Repo Index
 
 on:
+  workflow_dispatch: # 允许手动点击运行
   push:
     paths:
-      - 'debs/**' # 只有 debs 文件夹变动时才触发
+      - 'debs/**' # 当 debs 文件夹内容有变动时自动运行
 
 jobs:
   build:
@@ -19,11 +20,10 @@ jobs:
       - name: Generate Packages.gz in debs folder
         run: |
           cd debs
-          # 1. 扫描当前目录下的所有 deb 包
+          # 1. 扫描当前目录下的所有 deb 包生成索引
           dpkg-scanpackages . /dev/null > Packages
-          # 2. 压缩成 Sileo 必须的 .gz 格式
+          # 2. 压缩成 Sileo/Zebra 必须的 .gz 格式
           gzip -k Packages
-          # 3. 返回根目录，方便后续 git 操作
           cd ..
 
       - name: Commit and Push Index
@@ -32,6 +32,6 @@ jobs:
           git config --local user.name "GitHub Action"
           # 添加生成的索引文件
           git add debs/Packages debs/Packages.gz
-          # 提交更改，如果没有变化则跳过
+          # 提交更改，如果没有变化则跳过报错
           git commit -m "Auto-update repo index" || echo "No changes to commit"
           git push
