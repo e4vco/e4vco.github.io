@@ -1,0 +1,57 @@
+Package: com.ginsu.comet
+Version: 1.0.5
+Architecture: iphoneos-arm64
+Maintainer: Ginsu <njl02@outlook.com>
+Installed-Size: 2211
+Depends: dev.theos.orion14, firmware (>= 14.0)
+Filename: ./com.ginsu.comet_1.0.5_iphoneos-arm64.deb
+Size: 228556
+MD5sum: fc8d4ef926a31afc6d40d347cfa41b9d
+SHA1: f65a53562f6ea98132a01cc7527c5c7ec88ccada
+SHA256: 757c4e52a68c14139b179852da85140deb58a33492deeb27d15027bc06ca3c13
+Section: Tweaks
+Description: A SwiftUI Prefs Framework
+Tag: compatible_min::ios14.0
+Author: Ginsu <njl02@outlook.com>
+Depiction: https://chariz.com/get/comet
+Icon: https://img.chariz.cloud/icon/comet/icon@3x.png
+Name: Comet
+
+Package: dev.theos.orion14
+Version: 1.0.2
+Architecture: iphoneos-arm64
+Maintainer: Theos Team <support@theos.dev>
+Installed-Size: 514
+Depends: firmware (>= 14.0), firmware (<< 18.0), mobilesubstrate (>= 0.9.5000)
+Provides: dev.theos.orion (= 1.0.2)
+Filename: ./dev.theos.orion14_1.0.2_iphoneos-arm64.deb
+Size: 93284
+MD5sum: fdb72c66bd6018058b57962d76546957
+SHA1: 724dd1f99f51c4082af6f604643b7ce613a21d11
+SHA256: 4fa4ff6f751166c76a12cc3e0fcf2e62bb0ee80e0dcea78b0d4e79de5131666c
+Section: System
+Description: Runtime for tweaks built using Orion and Swift
+Tag: role::developer, compatible_min::ios14.0
+Author: Theos Team <support@theos.dev>
+Depiction: https://chariz.com/get/orion-runtime14
+Icon: https://img.chariz.cloud/icon/orion-runtime14/icon@3x.png
+Name: Orion Runtime (iOS 14 – 17)
+
+Package: plistbuddy
+Version: 2021.08.01
+Architecture: iphoneos-arm64
+Maintainer: Procursus Team <support@procurs.us>
+Installed-Size: 96
+Depends: libiosexec1 (>= 1.2.2)
+Filename: ./plistbuddy_2021.08.01_iphoneos-arm64.deb
+Size: 22962
+MD5sum: 42c805f61474bf081e90fe8e94bec86a
+SHA1: 182dd979dbba2dee48ea0659ccb0d4b5a4d05922
+SHA256: 2e55b8c124cbee355f47cdd963a8dd94da0693426b654f7eccaf55e82c17ef0a
+Section: Archiving
+Priority: optional
+Homepage: https://www.darlinghq.org
+Description: a property list editor
+ PlistBuddy is a property list editor in macOS. This package is a clone of
+ PlistBuddy from Darling.
+
