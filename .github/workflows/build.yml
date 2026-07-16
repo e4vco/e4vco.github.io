@@ -1,6 +1,37 @@
-      - name: Generate Packages Index
+name: Update APT Repo
+
+on:
+  push:
+    paths:
+      - 'debs/**' # 只有 debs 文件夹变动时才触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dpkg-dev
+        run: sudo apt-get update && sudo apt-get install -y dpkg-dev
+
+      - name: Generate Packages.gz in debs folder
         run: |
-          cd debs  # 先进入 debs 文件夹
+          cd debs
+          # 1. 扫描当前目录下的所有 deb 包
           dpkg-scanpackages . /dev/null > Packages
+          # 2. 压缩成 Sileo 必须的 .gz 格式
           gzip -k Packages
-          # 此时 Packages.gz 就在 debs 文件夹里了
+          # 3. 返回根目录，方便后续 git 操作
+          cd ..
+
+      - name: Commit and Push Index
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # 添加生成的索引文件
+          git add debs/Packages debs/Packages.gz
+          # 提交更改，如果没有变化则跳过
+          git commit -m "Auto-update repo index" || echo "No changes to commit"
+          git push
