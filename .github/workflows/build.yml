@@ -30,8 +30,12 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
           # 添加生成的索引文件
           git add debs/Packages debs/Packages.gz
-          # 提交更改，如果没有变化则跳过报错
+          
+          # 提交更改
           git commit -m "Auto-update repo index" || echo "No changes to commit"
-          git push
+          
+          # 使用 GITHUB_TOKEN 进行推送
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
