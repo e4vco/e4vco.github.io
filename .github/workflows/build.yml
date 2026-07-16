@@ -1,18 +1,24 @@
 name: Update APT Repo Index
 
+permissions:
+  contents: write
+
 on:
-  workflow_dispatch: # 允许手动点击运行
+  workflow_dispatch:
   push:
     paths:
-      - 'debs/**' # 当 debs 文件夹内容有变动时自动运行
+      - 'debs/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Install dpkg-dev
         run: sudo apt-get update && sudo apt-get install -y dpkg-dev
@@ -20,9 +26,7 @@ jobs:
       - name: Generate Packages.gz in debs folder
         run: |
           cd debs
-          # 1. 扫描当前目录下的所有 deb 包生成索引
           dpkg-scanpackages . /dev/null > Packages
-          # 2. 压缩成 Sileo/Zebra 必须的 .gz 格式
           gzip -k Packages
           cd ..
 
@@ -30,12 +34,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
-          # 添加生成的索引文件
           git add debs/Packages debs/Packages.gz
-          
-          # 提交更改
           git commit -m "Auto-update repo index" || echo "No changes to commit"
-          
-          # 使用 GITHUB_TOKEN 进行推送
-          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+          git push origin HEAD:main
