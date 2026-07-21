@@ -27,6 +27,7 @@ jobs:
         run: |
           cd debs
           dpkg-scanpackages . /dev/null > Packages
+          rm -f Packages.gz
           gzip -k Packages
           cd ..
 
