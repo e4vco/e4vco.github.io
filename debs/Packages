@@ -76,3 +76,23 @@ Description: a property list editor
  PlistBuddy is a property list editor in macOS. This package is a clone of
  PlistBuddy from Darling.
 
+Package: ws.hbang.common
+Version: 2.0
+Architecture: iphoneos-arm64
+Maintainer: HASHBANG Productions <support@hbang.ws>
+Installed-Size: 3132
+Depends: firmware (>= 15.0)
+Filename: ./ws.hbang.common_2.0_iphoneos-arm64..deb
+Size: 198906
+MD5sum: b41babea6af14166166ac70da0d472bb
+SHA1: d7703febee3eaea3b1319d18cff7c7d59a9af2ab
+SHA256: 67338fa3f52951d5cbb900e8582e15dfff5964104bf627643bfe3901cda69652
+Section: Development
+Description: Support library for tweaks
+Tag: role::developer, compatible_min::ios15.0
+Author: HASHBANG Productions <support@hbang.ws>
+Depiction: https://chariz.com/get/cephei
+Icon: https://img.chariz.cloud/icon/cephei/icon@3x.png
+Name: Cephei Tweak Support
+Support: https://hashbang.productions/support/
+
