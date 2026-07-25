@@ -23,36 +23,46 @@ jobs:
       - name: Install dpkg-dev
         run: sudo apt-get update && sudo apt-get install -y dpkg-dev
 
-      - name: Generate Packages.gz in debs folder
-        run: |
-          cd debs
-
-          # 确保所有 .deb 可读并修正所有权（避免 dpkg-deb 无法读取）
-          sudo chmod -R a+r .
-          sudo chown -R $USER:$USER .
-
-          # 尝试生成 Packages，如果失败则记录错误并把问题包移到 .bad 目录再重试
-          set -o pipefail
-          if ! fakeroot dpkg-scanpackages . /dev/null > Packages 2>dpkg-scan.err; then
-            echo "dpkg-scanpackages failed; inspecting errors..."
-            sed -n '1,200p' dpkg-scan.err || true
-
-            mkdir -p .bad
-            # 从错误日志中提取无法解析的文件并移动它们
-            grep "couldn't parse control information from" dpkg-scan.err | sed -E "s/.*from (.*)$/\1/" | while read -r f; do
-              if [ -n "$f" ] && [ -f "$f" ]; then
-                echo "Moving problematic file: $f -> .bad/"
-                mv -- "$f" .bad/
-              fi
-            done
-
-            # 再次尝试（如果仍失败，脚本会让 job 失败以便进一步诊断）
-            fakeroot dpkg-scanpackages . /dev/null > Packages
-          fi
-
-          # 保留压缩版本
-          gzip -kf Packages
-          cd ..
+- name: Generate Packages.gz in debs folder
+  run: |
+    cd debs
+    
+    # 确保所有 .deb 可读并修正所有权
+    sudo chmod -R a+r .
+    sudo chown -R $USER:$USER .
+    
+    # 修复任何可能损坏的 .deb 文件权限
+    find . -name "*.deb" -exec chmod 644 {} \;
+    
+    set -o pipefail
+    mkdir -p .bad
+    
+    # 尝试生成 Packages，如果失败则移动问题包并重试
+    if ! fakeroot dpkg-scanpackages . /dev/null > Packages 2>dpkg-scan.err; then
+      echo "dpkg-scanpackages failed; inspecting errors..."
+      sed -n '1,200p' dpkg-scan.err || true
+      
+      # 从错误日志中提取无法解析的文件并移动它们
+      grep "couldn't parse control information from" dpkg-scan.err | sed -E "s/.*from (.*)$/\1/" | while read -r f; do
+        if [ -n "$f" ] && [ -f "$f" ]; then
+          echo "Moving problematic file: $f -> .bad/"
+          mv -- "$f" .bad/
+        fi
+      done
+      
+      # 清除之前的失败日志
+      rm -f dpkg-scan.err Packages
+      
+      # 再次尝试（排除 .bad 目录）
+      fakeroot dpkg-scanpackages . /dev/null > Packages 2>dpkg-scan-retry.err || {
+        echo "Retry failed; showing errors:"
+        cat dpkg-scan-retry.err || true
+        exit 25
+      }
+    fi
+    
+    gzip -kf Packages
+    cd ..
       - name: Commit and Push Index
         run: |
           git config --local user.email "action@github.com"
